@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Job Application Agent",
+  "version": "0.1.0",
+  "description": "Generate tailored CVs and cover letters for job listings.",
+  "permissions": ["storage", "scripting", "activeTab"],
+  "host_permissions": ["http://localhost:8000/*"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
