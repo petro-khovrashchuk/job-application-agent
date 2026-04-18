@@ -1,0 +1,22 @@
+{
+  "personal_fields": [
+    "first_name",
+    "last_name",
+    "middle_name",
+    "email_address",
+    "phone_number",
+    "street_address",
+    "apartment_suite_number",
+    "city",
+    "state_province",
+    "postal_zip_code",
+    "country",
+    "linkedin_url",
+    "portfolio_website",
+    "preferred_pronouns",
+    "date_of_birth",
+    "citizenship_status",
+    "work_authorization_status",
+    "visa_sponsorship_requirement"
+  ]
+}

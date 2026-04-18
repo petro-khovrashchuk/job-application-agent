@@ -1,6 +1,7 @@
 from typing import Dict
 
 from ..schemas.request import ProcessRequest
+from ..form_fields import FORM_FIELD_PRESET
 
 
 class PromptBuilder:
@@ -22,11 +23,17 @@ class PromptBuilder:
             "Reference the applicant's strengths from the provided CV."
         )
 
+        personal_section = "\n".join(FORM_FIELD_PRESET.personal_fields)
         form_prompt = (
-            "Extract structured form data for application submission based on the inputs.\n"
+            "Extract structured form data needed for a job application form.\n"
             f"Target Job:\n{request.job_description_markdown}\n\n"
             f"Applicant Notes:\n{request.user_wishes}\n\n"
-            "Return key: value pairs for fields such as desired role and availability."
+            "Respond with valid JSON only. Include at least the following keys: reference_id, job_title, department, "
+            "location, availability, recruiter_name, application_status, required_skills (list), benefits (list), "
+            "next_steps (list).\n"
+            "Place any additional context inside an \"extras\" object.\n"
+            "Use the following personal fields when relevant, and fill missing ones with empty strings: \n"
+            f"{personal_section}"
         )
 
         return {

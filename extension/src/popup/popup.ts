@@ -7,6 +7,7 @@ import {
   ScrapeResultMessage,
 } from "../messaging/message_types";
 import { sanitizeCoverLetterText, sanitizeCvText } from "../utils/result_helpers";
+import { FormValue } from "../types/extension_types";
 
 const cvField = document.getElementById("cv-markdown") as HTMLTextAreaElement;
 const wishesField = document.getElementById("user-wishes") as HTMLTextAreaElement;
@@ -135,7 +136,7 @@ chrome.runtime.onMessage.addListener((message: BackgroundResponseMessage) => {
     formDataList.innerHTML = "";
     Object.entries(response.form_data ?? {}).forEach(([key, value]) => {
       const item = document.createElement("li");
-      item.textContent = `${key}: ${value}`;
+      item.textContent = `${key}: ${formatFormValue(value)}`;
       formDataList.appendChild(item);
     });
 
@@ -166,3 +167,21 @@ copyButtons.forEach((button) => {
 });
 
 restoreState();
+
+function formatFormValue(value: FormValue | undefined): string {
+  if (value === undefined) {
+    return "";
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => `• ${item}`).join("\n");
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return Object.entries(value)
+      .map(([key, entryValue]) => `${key}: ${entryValue}`)
+      .join("\n");
+  }
+
+  return value;
+}
