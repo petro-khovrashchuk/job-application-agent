@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     chrome_extension_id: str = Field(..., env="CHROME_EXTENSION_ID")
     llm_provider_url: Optional[HttpUrl] = Field(None, env="LLM_PROVIDER_URL")
     llm_provider_timeout_seconds: float = Field(30.0, env="LLM_PROVIDER_TIMEOUT_SECONDS")
+    llm_provider_api_key: Optional[str] = Field(None, env="LLM_PROVIDER_API_KEY")
+    llm_provider_type: str = Field("generic", env="LLM_PROVIDER_TYPE")
+    llm_provider_model: str = Field("gpt-4o-mini", env="LLM_PROVIDER_MODEL")
 
     @property
     def extension_origin(self) -> str:

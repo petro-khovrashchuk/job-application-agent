@@ -1,8 +1,10 @@
 import json
 import re
-from typing import Dict, Any
+from typing import Any, Dict
 
-from ..llm.base import BaseLLMProvider
+from fastapi import HTTPException
+
+from ..llm.base import BaseLLMProvider, LLMProviderError
 from ..schemas.request import ProcessRequest
 from ..schemas.response import ProcessResponse
 from .prompt_builder import PromptBuilder
@@ -16,9 +18,12 @@ class JobAgentService:
     async def craft_application(self, request: ProcessRequest) -> ProcessResponse:
         prompts = self._prompt_builder.build(request)
 
-        tailored_cv = await self._provider.generate(prompts["tailored_cv"], "tailored_cv")
-        cover_letter = await self._provider.generate(prompts["cover_letter"], "cover_letter")
-        form_blob = await self._provider.generate(prompts["form_data"], "form_data")
+        try:
+            tailored_cv = await self._provider.generate(prompts["tailored_cv"], "tailored_cv")
+            cover_letter = await self._provider.generate(prompts["cover_letter"], "cover_letter")
+            form_blob = await self._provider.generate(prompts["form_data"], "form_data")
+        except LLMProviderError as exc:
+            raise HTTPException(status_code=503, detail=f"LLM provider failure: {exc}") from exc
 
         form_data = self._parse_form_blob(form_blob)
 

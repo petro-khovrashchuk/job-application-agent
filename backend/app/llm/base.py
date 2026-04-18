@@ -8,3 +8,7 @@ class BaseLLMProvider(ABC):
     async def generate(self, prompt: str, purpose: str) -> str:
         """Generate text for the given prompt and purpose."""
         raise NotImplementedError
+
+
+class LLMProviderError(Exception):
+    """Signals problems occurring inside an LLM backend provider."""

@@ -23,7 +23,8 @@ chrome.runtime.onMessage.addListener((message: BackgroundMessage, sender, sendRe
       };
       chrome.runtime.sendMessage(response);
     });
-    return true;
+    sendResponse({ accepted: true });
+    return false;
   }
 
   return false;
