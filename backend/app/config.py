@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import List
+from typing import List, Optional
 
 from pydantic import Field, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -10,6 +10,8 @@ class Settings(BaseSettings):
 
     dev_origin: HttpUrl = Field("http://localhost:3000", env="DEV_ORIGIN")
     chrome_extension_id: str = Field(..., env="CHROME_EXTENSION_ID")
+    llm_provider_url: Optional[HttpUrl] = Field(None, env="LLM_PROVIDER_URL")
+    llm_provider_timeout_seconds: float = Field(30.0, env="LLM_PROVIDER_TIMEOUT_SECONDS")
 
     @property
     def extension_origin(self) -> str:
