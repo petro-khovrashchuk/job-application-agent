@@ -1,4 +1,6 @@
-from typing import Dict
+import json
+import re
+from typing import Dict, Any
 
 from ..llm.base import BaseLLMProvider
 from ..schemas.request import ProcessRequest
@@ -28,10 +30,42 @@ class JobAgentService:
 
     @staticmethod
     def _parse_form_blob(blob: str) -> Dict[str, str]:
+        json_payload = JobAgentService._extract_json_payload(blob)
+        if json_payload:
+            return JobAgentService._flatten_payload(json_payload)
+
         data: Dict[str, str] = {}
         for line in blob.splitlines():
             if ":" not in line:
                 continue
             key, value = line.split(":", 1)
             data[key.strip()] = value.strip()
+        return data
+
+    @staticmethod
+    def _extract_json_payload(blob: str) -> Any | None:
+        match = re.search(r"```json\s*([\s\S]*?)```", blob, re.IGNORECASE)
+        if not match:
+            return None
+
+        try:
+            return json.loads(match.group(1))
+        except json.JSONDecodeError:
+            return None
+
+    @staticmethod
+    def _flatten_payload(payload: Any, parent_key: str = "") -> Dict[str, str]:
+        data: Dict[str, str] = {}
+
+        if isinstance(payload, dict):
+            for key, value in payload.items():
+                compound_key = f"{parent_key}.{key}" if parent_key else key
+                data.update(JobAgentService._flatten_payload(value, compound_key))
+        elif isinstance(payload, list):
+            for idx, value in enumerate(payload):
+                compound_key = f"{parent_key}[{idx}]" if parent_key else f"[{idx}]"
+                data.update(JobAgentService._flatten_payload(value, compound_key))
+        else:
+            data[parent_key or "value"] = str(payload)
+
         return data

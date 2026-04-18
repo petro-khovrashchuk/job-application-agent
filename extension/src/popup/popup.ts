@@ -6,6 +6,7 @@ import {
   GenerateApplicationMessage,
   ScrapeResultMessage,
 } from "../messaging/message_types";
+import { sanitizeCoverLetterText, sanitizeCvText } from "../utils/result_helpers";
 
 const cvField = document.getElementById("cv-markdown") as HTMLTextAreaElement;
 const wishesField = document.getElementById("user-wishes") as HTMLTextAreaElement;
@@ -128,8 +129,8 @@ chrome.runtime.onMessage.addListener((message: BackgroundResponseMessage) => {
       return;
     }
 
-    tailoredCvOutput.textContent = response.tailored_cv;
-    coverLetterOutput.textContent = response.cover_letter;
+    tailoredCvOutput.textContent = sanitizeCvText(response.tailored_cv);
+    coverLetterOutput.textContent = sanitizeCoverLetterText(response.cover_letter);
 
     formDataList.innerHTML = "";
     Object.entries(response.form_data ?? {}).forEach(([key, value]) => {
