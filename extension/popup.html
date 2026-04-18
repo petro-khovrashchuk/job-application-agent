@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Job Application Agent</title>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Job Application Agent</h1>
+        <p>Snapshot your base CV, grab a job posting, and generate tailored content.</p>
+      </header>
+
+      <section class="field-group">
+        <label for="cv-markdown">Base CV (Markdown)</label>
+        <textarea id="cv-markdown" rows="6" placeholder="Paste your base CV here"></textarea>
+        <button id="save-cv" class="inline">Save CV</button>
+      </section>
+
+      <section class="field-group">
+        <label for="user-wishes">User Wishes / Notes</label>
+        <textarea id="user-wishes" rows="3" placeholder="E.g., focus on leadership or remote work"></textarea>
+      </section>
+
+      <section class="context-panel">
+        <div class="context-header">
+          <div>
+            <strong>Job Context</strong>
+            <p class="hint">Ensure a job page is open before refreshing.</p>
+          </div>
+          <button id="refresh-context">Refresh Context</button>
+        </div>
+        <pre id="job-context-preview" class="context-preview">No context yet.</pre>
+        <div id="job-url" class="context-url"></div>
+      </section>
+
+      <div id="status-bar" class="status">Idle</div>
+
+      <div class="actions">
+        <button id="process-application" class="primary">Process Application</button>
+      </div>
+
+      <section id="results" class="results" hidden>
+        <div class="result-block">
+          <div class="result-header">
+            <span>Tailored CV</span>
+            <button data-copy-target="tailored-cv-output">Copy</button>
+          </div>
+          <pre id="tailored-cv-output" class="result-content"></pre>
+        </div>
+
+        <div class="result-block">
+          <div class="result-header">
+            <span>Cover Letter</span>
+            <button data-copy-target="cover-letter-output">Copy</button>
+          </div>
+          <pre id="cover-letter-output" class="result-content"></pre>
+        </div>
+
+        <div class="result-block">
+          <div class="result-header">
+            <span>Form Data</span>
+            <button data-copy-target="form-data-output">Copy</button>
+          </div>
+          <ul id="form-data-output" class="form-data"></ul>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="/src/popup/popup.ts"></script>
+  </body>
+</html>
