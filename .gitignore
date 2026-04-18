@@ -1,0 +1,36 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env.local
+
+# Environment folders
+env/
+venv/
+.venv/
+/.env
+
+# IDEs and editors
+.idea/
+.vscode/
+
+# Node dependencies and build artifacts
+node_modules/
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test artifacts
+.pytest_cache/
+coverage/
+
+# Chrome extension artifacts
+extension/build/
+
+# Misc
+.DS_Store
+*.swp
