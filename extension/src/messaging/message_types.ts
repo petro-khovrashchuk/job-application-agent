@@ -33,3 +33,4 @@ export interface GenerateResultMessage {
 
 export type BackgroundRequestMessage = ScrapeJobPageMessage | GenerateApplicationMessage;
 export type BackgroundResponseMessage = ScrapeResultMessage | GenerateResultMessage;
+export type JobContextPayload = ScrapeResultMessage["payload"];

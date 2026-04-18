@@ -5,6 +5,7 @@ import {
   ScrapeJobPageMessage,
   ScrapeResultMessage,
 } from "../messaging/message_types";
+import { saveJobContext } from "../storage/context_storage";
 
 type BackgroundMessage = ScrapeJobPageMessage | GenerateApplicationMessage;
 
@@ -57,6 +58,7 @@ function handleScrapeJob(sendResponse: (response: unknown) => void) {
         jobUrl: response?.jobUrl ?? "",
         jobTitle: response?.jobTitle,
       };
+      void saveJobContext(payload);
       reportScrapeResult(payload);
       sendResponse({ success: true });
     });

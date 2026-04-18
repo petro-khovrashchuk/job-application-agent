@@ -1,5 +1,6 @@
 import "./styles.css";
 import { loadCvMarkdown, saveCvMarkdown } from "../storage/cv_storage";
+import { loadJobContext } from "../storage/context_storage";
 import {
   BackgroundResponseMessage,
   GenerateApplicationMessage,
@@ -34,13 +35,31 @@ function setLoading(isLoading: boolean) {
   processButton.textContent = isLoading ? "Processing…" : "Process Application";
 }
 
-async function restoreCv() {
-  const saved = await loadCvMarkdown();
-  if (saved) {
-    cvField.value = saved;
+function applyJobContext(snapshot: ScrapeResultMessage["payload"], sourceMessage?: string) {
+  currentJobMarkdown = snapshot.jobDescriptionMarkdown ?? "";
+  currentJobUrl = snapshot.jobUrl ?? "";
+  jobPreview.textContent = currentJobMarkdown || "No text was captured from the current job page.";
+  jobUrlLabel.textContent = currentJobUrl;
+
+  if (currentJobMarkdown) {
+    setStatus(sourceMessage ?? "Job context ready. Submit when you are ready.", "success");
+  } else {
+    setStatus(sourceMessage ?? "Job context empty. Refresh to capture the page.", "error");
+  }
+}
+
+async function restoreState() {
+  const [savedCv, savedContext] = await Promise.all([loadCvMarkdown(), loadJobContext()]);
+
+  if (savedCv) {
+    cvField.value = savedCv;
     setStatus("Loaded saved CV.", "success");
   } else {
     setStatus("Paste your base CV to get started.");
+  }
+
+  if (savedContext) {
+    applyJobContext(savedContext, "Loaded job context from previous page.");
   }
 }
 
@@ -49,7 +68,7 @@ saveButton.addEventListener("click", async () => {
   setStatus("CV saved to storage.", "success");
 });
 
-refreshContextButton.addEventListener("click", () => {
+  refreshContextButton.addEventListener("click", () => {
   setStatus("Scanning current tab for job context…", "loading");
   chrome.runtime.sendMessage({ action: "SCRAPE_JOB_PAGE" }, () => {
     if (chrome.runtime.lastError) {
@@ -92,11 +111,7 @@ chrome.runtime.onMessage.addListener((message: BackgroundResponseMessage) => {
       return;
     }
 
-    currentJobMarkdown = message.payload.jobDescriptionMarkdown;
-    currentJobUrl = message.payload.jobUrl;
-    jobPreview.textContent = currentJobMarkdown || "No text was captured from the current page.";
-    jobUrlLabel.textContent = currentJobUrl;
-    setStatus("Job context ready. Submit when you are ready.", "success");
+    applyJobContext(message.payload);
     return;
   }
 
@@ -149,4 +164,4 @@ copyButtons.forEach((button) => {
   });
 });
 
-restoreCv();
+restoreState();
